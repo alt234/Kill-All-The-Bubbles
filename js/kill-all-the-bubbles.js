@@ -35,7 +35,7 @@ function Game() {
 Game.prototype.Start = function() {
 	var _this = this;
 	
-	_this.initLevel(10);
+	_this.initLevel(1);
 
 	var add = function() {
         _this.addBubble(_this);
