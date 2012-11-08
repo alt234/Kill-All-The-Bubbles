@@ -1,0 +1,20 @@
+html, body {
+	background-color: #222;
+	color: #DDD;
+	overflow: hidden;
+}
+
+.stats {
+	display: none;
+	font-family: 'Cedarville Cursive', cursive; 
+	font-size: 2em;
+	color: #DDD;
+	float: right;
+	width: 300px;
+	text-align: right;
+	margin: 15px 10px 0 0;
+}
+
+#levelValue, #highScoreValue, #pointsToNextLevel {
+	margin-top: 20px;
+}
