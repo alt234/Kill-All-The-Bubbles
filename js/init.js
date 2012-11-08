@@ -1,5 +1,4 @@
 $(function () {
 	var game = new Game();
-	game.StartAddingBubbles();
-	//addBubble();
+	game.Start();
 });
