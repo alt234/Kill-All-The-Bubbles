@@ -1,44 +1,69 @@
-var gameHasStarted = false;
+var gameHasStarted;
+    
+var currentLevel; 
+var levelThreshold;
+var currentLevelThreshold;
+    
+var score;
+var highScore;
+var minScore;
+var pointsToNextLevel;
+var missedBubblePenalty;
+    
+var timeModifier;
+var minTimeModifier;
+var startModifierDegradation;
+var modifierDegradationFactor;
+//var maxTimeBetweenBubbleCreation;
+var minTimeBetweenBubbleCreation;
+var minBubbleTravelTime;
+var minSway;
+var maxSway;
+var swayTime;
 
-var currentLevel = 1;
-var levelThreshold = 100;
-var currentLevelThreshold = levelThreshold * currentLevel;
+function Game() {
+	gameHasStarted = false;
 
-var score = 0;
-var highScore = 0;
-var minScore = -100;
-var pointsToNextLevel = currentLevelThreshold;
-var missedBubblePenalty = 10;
+	currentLevel = 1;
+	levelThreshold = 100;
+	currentLevelThreshold = levelThreshold * currentLevel;
 
-var timeModifier = 850;
-var minTimeModifier = 30;
-var startModifierDegradation = 110;
-var modifierDegradationFactor = 15;
-var maxTimeBetweenBubbleCreation = 1500;
-var minTimeBetweenBubbleCreation = 200;
-var minBubbleTravelTime = 100;
-var minSway = 20;
-var maxSway = 100;
-var swayTime = 3000;
+	score = 0;
+	highScore = 0;
+	minScore = -100;
+	pointsToNextLevel = currentLevelThreshold;
+	missedBubblePenalty = 10;
 
-$(function () {
-	initLevel(1);
+	timeModifier = 850;
+	minTimeModifier = 30;
+	startModifierDegradation = 110;
+	modifierDegradationFactor = 15;
+	this.maxTimeBetweenBubbleCreation = 1500;
+	minTimeBetweenBubbleCreation = 200;
+	minBubbleTravelTime = 100;
+	minSway = 20;
+	maxSway = 100;
+	swayTime = 3000;
+}
 
-	// Wait a couple of seconds before the bubbles start going. Surprise!
-	setTimeout("startAddingBubbles()", 2500);
-});
+Game.prototype.Start = function() {
+	this.initLevel(1);
+}
 
-function startAddingBubbles() {
+Game.prototype.StartAddingBubbles = function() {
+	this.initLevel(1);
+	
+	var _this = this;
 	var add = function() {
-        addBubble();
-        var rand = Math.round(Math.random() * (maxTimeBetweenBubbleCreation - minTimeBetweenBubbleCreation)) + maxTimeBetweenBubbleCreation;
+        _this.addBubble(_this);
+        var rand = Math.round(Math.random() * (_this.maxTimeBetweenBubbleCreation - minTimeBetweenBubbleCreation)) + _this.maxTimeBetweenBubbleCreation;
         setTimeout(add, rand);
     }
 
     add();
 }
 
-function addBubble() {
+Game.prototype.addBubble = function(_this) {
 	var colors = new Array();
 	colors[0] = "#05F2F2";
 	colors[1] = "#FF007E";
@@ -109,7 +134,7 @@ function addBubble() {
 				pointsToNextLevel = currentLevelThreshold - previousLevelThreshold;
 			}
 			
-			updateStats();
+			_this.updateStats();
 		}
 	}).mousedown(function() {		
 		$(this).stop();
@@ -126,14 +151,15 @@ function addBubble() {
 		var thisBubblesPoints = Math.floor(maxSize / parseInt(size)) * 10;
 		
 		var prevScore = score;
+		
 		score += thisBubblesPoints;
 		pointsToNextLevel -= thisBubblesPoints;
 		
 		if (score >= currentLevelThreshold && prevScore < currentLevelThreshold) {
-			increaseDifficulty();
+			_this.increaseDifficulty();
 		}
 		
-		updateStats();
+		_this.updateStats();
 	});
 
 	var sideToSide = function() {
@@ -152,7 +178,7 @@ function addBubble() {
 }
 
 // Need to see if I come can up with some sort of progression that doesn't require all the special cases. So far though these special cases make this is the most fun variant.
-function increaseDifficulty() {
+Game.prototype.increaseDifficulty = function() {
 	currentLevel += 1;
 	
 	if (currentLevel > 6) {
@@ -175,13 +201,13 @@ function increaseDifficulty() {
 		timeModifier = minTimeModifier;
 	}
 	
-	if (currentLevel == 2) maxTimeBetweenBubbleCreation -= 500;
-	else if (currentLevel == 3) maxTimeBetweenBubbleCreation -= 300;
-	else if (currentLevel > 3 && currentLevel < 8) maxTimeBetweenBubbleCreation -= 100
-	else maxTimeBetweenBubbleCreation -= 50
+	if (currentLevel == 2) this.maxTimeBetweenBubbleCreation -= 500;
+	else if (currentLevel == 3) this.maxTimeBetweenBubbleCreation -= 300;
+	else if (currentLevel > 3 && currentLevel < 8) this.maxTimeBetweenBubbleCreation -= 100
+	else this.maxTimeBetweenBubbleCreation -= 50
 	
-	if (maxTimeBetweenBubbleCreation < 100) {
-		maxTimeBetweenBubbleCreation = 100;
+	if (this.maxTimeBetweenBubbleCreation < 100) {
+		this.maxTimeBetweenBubbleCreation = 100;
 	}
 	
 	minTimeBetweenBubbleCreation -= 25;
@@ -193,9 +219,9 @@ function increaseDifficulty() {
 	pointsToNextLevel = currentLevelThreshold - previousLevelThreshold;
 }
 
-function initLevel(level) {
+Game.prototype.initLevel = function(level) {
 	for (var i = 1; i < level; i++) {
-		increaseDifficulty();
+		this.increaseDifficulty();
 	}
 	
 	score = currentLevelThreshold - levelThreshold * currentLevel;
@@ -207,10 +233,10 @@ function initLevel(level) {
 		$(".stats").show();
 	}
 	
-	updateStats();
+	this.updateStats();
 }
 
-function updateStats() {
+Game.prototype.updateStats = function() {
 	if (score < minScore) {
 		score = minScore;
 	}
@@ -218,7 +244,7 @@ function updateStats() {
 	if (score > highScore) {
 		highScore = score;
 	}
-	
+
 	$("#scoreValue").text("Score: " + score);
 	$("#highScoreValue").text("High Score: " + highScore);
 	$("#levelValue").text("Level: " + currentLevel);
