@@ -1,13 +1,41 @@
 function Game() {
+	this.gameHasStarted;
+	
+	this.score;
+	this.highScore;
+	
+	this.currentLevel;
+	this.levelThreshold;
+	this.currentLevelThreshold;
+
+	this.hitPoints;
+	
+	this.pointsToNextLevel;
+	this.missedBubblePenalty;
+
+	this.timeModifier;
+	this.minTimeModifier;
+	this.startModifierDegradation;
+	this.modifierDegradationFactor;
+	this.maxTimeBetweenBubbleCreation;
+	this.minTimeBetweenBubbleCreation;
+	this.minBubbleTravelTime;
+	
+	this.Reset();
+}
+
+Game.prototype.Reset = function() {
 	this.gameHasStarted = false;
+	
+	this.score = 0;
+	this.highScore = 0;
 	
 	this.currentLevel = 1;
 	this.levelThreshold = 100;
 	this.currentLevelThreshold = this.levelThreshold * this.currentLevel;
 
-	this.score = 0;
-	this.highScore = 0;
-	this.minScore = -100;
+	this.hitPoints = 10;
+	
 	this.pointsToNextLevel = this.currentLevelThreshold;
 	this.missedBubblePenalty = 10;
 
@@ -18,15 +46,16 @@ function Game() {
 	this.maxTimeBetweenBubbleCreation = 1500;
 	this.minTimeBetweenBubbleCreation = 200;
 	this.minBubbleTravelTime = 100;
-	this.minSway = 20;
-	this.maxSway = 100;
-	this.swayTime = 3000;
+	
+	this.initLevel(1);
+	
+	this.updateStats();
 }
 
 Game.prototype.Start = function() {
 	var _this = this;
 	
-	_this.initLevel(10);
+	_this.initLevel(9);
 
 	var add = function() {
         _this.addBubble(_this);
@@ -56,20 +85,20 @@ Game.prototype.initLevel = function(level) {
 
 Game.prototype.addBubble = function(_this) {
 	var bubble = new Bubble();
-	var offScreenDistance = $(window).height() + bubble.dimensions;
-	
+
 	var bubbleTravelTime = (bubble.dimensions * _this.timeModifier);
 
 	if (bubbleTravelTime < _this.minBubbleTravelTime) {
 		bubbleTravelTime = _this.minBubbleTravelTime;
 	}
 		
-	bubble.domElement.appendTo("body").animate({ top: "-=" + offScreenDistance + "px" }, {
+	bubble.domElement.appendTo("body").animate({ top: "-=" + ($(window).height() + bubble.dimensions) + "px" }, {
 		queue: false, 
 		duration: bubbleTravelTime, 
 		easing: "linear",
 		complete: function() {
 			$(this).remove();
+			
 			if (!_this.gameHasStarted) {
 				return;
 			}
@@ -77,6 +106,12 @@ Game.prototype.addBubble = function(_this) {
 			var previousLevelThreshold = _this.currentLevelThreshold - _this.levelThreshold * _this.currentLevel;
 			
 			_this.score -= _this.missedBubblePenalty;
+			_this.hitPoints--;
+
+			if (_this.hitPoints == 0) {
+				_this.gameHasStarted = false;
+				_this.Reset();
+			}
 			
 			_this.pointsToNextLevel += _this.missedBubblePenalty;
 			if (_this.score < previousLevelThreshold) {
@@ -109,27 +144,34 @@ Game.prototype.addBubble = function(_this) {
 		_this.updateStats();
 	});
 
+	var minSway = 20;
+	var maxSway = 100;
+	var swayTime = 3000;
 	var sideToSide = function() {
-		var sway1 = Math.floor(Math.random() * (_this.maxSway - _this.minSway + 1)) + _this.minSway;
-		var sway2 = Math.floor(Math.random() * (_this.maxSway - _this.minSway + 1)) + _this.minSway;
+		var sway1 = Math.floor(Math.random() * (maxSway - minSway + 1)) + minSway;
+		var sway2 = Math.floor(Math.random() * (maxSway - minSway + 1)) + minSway;
 
 		bubble.domElement.animate({
 			left:"-="+sway1
-		}, _this.swayTime, function() {
-			$(this).animate({ left:"+="+sway2 }, _this.swayTime)
+		}, swayTime, function() {
+			$(this).animate({ left:"+="+sway2 }, swayTime)
 		});
 	}
 	
 	sideToSide();
-	setInterval(sideToSide, _this.swayTime * 2);
+	setInterval(sideToSide, swayTime * 2);
 }
 
 // Need to see if I come can up with some sort of progression that doesn't require all the special cases. So far though these special cases make this is the most fun variant.
 Game.prototype.increaseDifficulty = function() {
 	this.currentLevel += 1;
+	
 	if (this.currentLevel > 6) {
 		this.startModifierDegradation = this.startModifierDegradation - this.modifierDegradationFactor;
-		if (this.startModifierDegradation <= 50) this.startModifierDegradation = 50;
+		
+		if (this.startModifierDegradation <= 50) {
+			this.startModifierDegradation = 50;
+		}
 		
 		if (this.currentLevel < 9) {
 			this.levelThreshold += 50;
@@ -166,18 +208,20 @@ Game.prototype.increaseDifficulty = function() {
 }
 
 Game.prototype.updateStats = function() {
-	if (this.score < this.minScore) {
-		this.score = this.minScore;
+	var minScore = -100;
+	if (this.score < minScore) {
+		this.score = minScore;
 	}
 	
 	if (this.score > this.highScore) {
 		this.highScore = this.score;
 	}
-	
+
 	$("#scoreValue").text("Score: " + this.score);
 	$("#highScoreValue").text("High Score: " + this.highScore);
 	$("#levelValue").text("Level: " + this.currentLevel);
 	$("#pointsToNextLevel").text("Next: " + this.pointsToNextLevel);
+	$("#hitPoints").text("Hit Points: " + this.hitPoints);
 }
 
 function Bubble() {	
