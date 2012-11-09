@@ -1,6 +1,6 @@
-//var GamePosition
+function Game(gamePosition) {
+	this.gamePosition = (typeof gamePosition === "undefined") ? "center" : gamePosition;
 
-function Game() {
 	this.gameHasStarted;
 	this.score;
 	this.highScore;
@@ -74,7 +74,7 @@ Game.prototype.initLevel = function(level) {
 }
 
 Game.prototype.addBubble = function(_this) {
-	var bubble = new Bubble();
+	var bubble = new Bubble(_this.gamePosition);
 
 	var bubbleTravelTime = (bubble.dimensions * _this.timeModifier);
 
@@ -214,7 +214,7 @@ Game.prototype.updateStats = function() {
 	$("#hitPoints").text("Hit Points: " + this.hitPoints);
 }
 
-function Bubble() {	
+function Bubble(gamePosition) {	
 	var colors = new Array();
 	colors[0] = "#05F2F2";
 	colors[1] = "#FF007E";
@@ -230,8 +230,23 @@ function Bubble() {
 	
 	var minDimensions = 40;
 	var maxDimensions = 200;
-	var minX = ($(window).width() / 2) - ($(window).width() / 4) + (maxDimensions / 2);
-	var maxX = ($(window).width() / 2) + ($(window).width() / 4) - (maxDimensions/ 2);
+	
+	var minX;
+	var maxX;
+	
+	if (gamePosition == "left") {
+		minX = maxDimensions;
+		maxX = $(window).width() / 2;
+	}
+	else if (gamePosition == "right") {
+		minX = $(window).width() / 2;
+		maxX = $(window).width() - maxDimensions;
+	}
+	else { // treat anything else as centered.
+		minX = ($(window).width() / 2) - ($(window).width() / 4) + (maxDimensions / 2);
+		maxX = ($(window).width() / 2) + ($(window).width() / 4) - (maxDimensions/ 2);
+	}
+	
 	var startingX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
 	
 	this.dimensions = Math.floor(Math.random() * (maxDimensions - minDimensions + 1)) + minDimensions;
