@@ -4,7 +4,6 @@ function Game(gamePosition) {
 
 Game.prototype.initGame = function() {
 	this.gameHasStarted = false;
-	this.bubblesKilled = 0;
 	this.score = 0;
 	this.highScore = 0;
 	this.currentLevel = 1;
@@ -20,6 +19,14 @@ Game.prototype.initGame = function() {
 	this.maxTimeBetweenBubbleCreation = 1500;
 	this.minTimeBetweenBubbleCreation = 200;
 	this.minBubbleTravelTime = 100;
+	
+	this.totalBubblesPopped = 0;
+	this.totalTealBubblesPopped = 0;
+	this.totalPinkBubblesPopped = 0;
+	this.totalPurpleBubblesPopped = 0;
+	this.totalGreenBubblesPopped = 0;
+	this.totalYellowBubblesPopped = 0;
+	this.totalWhiteBubblesPopped = 0;
 	
 	this.initLevel(1);
 }
@@ -81,7 +88,7 @@ Game.prototype.addBubble = function(_this) {
 			_this.score -= _this.missedBubblePenalty;
 			_this.hitPoints--;
 			
-			if (_this.hitPoints == 0) {
+			if (_this.hitPoints === 0) {
 				_this.updateStats();
 				_this.initGame();
 				return;
@@ -106,8 +113,8 @@ Game.prototype.addBubble = function(_this) {
 			return;
 		}
 		
-		_this.bubblesKilled++;
-		if (_this.bubblesKilled > 0 && _this.bubblesKilled % 20 == 0) {
+		_this.totalBubblesPopped++;
+		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 20 === 0) {
 			_this.hitPoints++;
 		}
 		
@@ -167,8 +174,8 @@ Game.prototype.increaseDifficulty = function() {
 		this.timeModifier = this.minTimeModifier;
 	}
 	
-	if (this.currentLevel == 2) this.maxTimeBetweenBubbleCreation -= 500;
-	else if (this.currentLevel == 3) this.maxTimeBetweenBubbleCreation -= 300;
+	if (this.currentLevel === 2) this.maxTimeBetweenBubbleCreation -= 500;
+	else if (this.currentLevel === 3) this.maxTimeBetweenBubbleCreation -= 300;
 	else if (this.currentLevel > 3 && this.currentLevel < 8) this.maxTimeBetweenBubbleCreation -= 100
 	else this.maxTimeBetweenBubbleCreation -= 50
 	
@@ -221,11 +228,11 @@ function Bubble(gamePosition) {
 	var minX;
 	var maxX;
 	
-	if (gamePosition == "left") {
+	if (gamePosition === "left") {
 		minX = maxDimensions;
 		maxX = $(window).width() / 2;
 	}
-	else if (gamePosition == "right") {
+	else if (gamePosition === "right") {
 		minX = $(window).width() / 2;
 		maxX = $(window).width() - maxDimensions;
 	}
