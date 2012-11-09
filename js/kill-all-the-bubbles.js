@@ -1,32 +1,16 @@
 function Game(gamePosition) {
 	this.gamePosition = (typeof gamePosition === "undefined") ? "center" : gamePosition;
-
-	this.gameHasStarted;
-	this.score;
-	this.highScore;
-	this.currentLevel;
-	this.levelThreshold;
-	this.currentLevelThreshold;
-	this.hitPoints;
-	this.pointsToNextLevel;
-	this.missedBubblePenalty;
-	this.timeModifier;
-	this.minTimeModifier;
-	this.startModifierDegradation;
-	this.modifierDegradationFactor;
-	this.maxTimeBetweenBubbleCreation;
-	this.minTimeBetweenBubbleCreation;
-	this.minBubbleTravelTime;
 }
 
 Game.prototype.initGame = function() {
 	this.gameHasStarted = false;
+	this.bubblesKilled = 0;
 	this.score = 0;
 	this.highScore = 0;
 	this.currentLevel = 1;
 	this.levelThreshold = 100;
 	this.currentLevelThreshold = this.levelThreshold * this.currentLevel;
-	this.hitPoints = 10;
+	this.hitPoints = 5;
 	this.pointsToNextLevel = this.currentLevelThreshold;
 	this.missedBubblePenalty = 10;
 	this.timeModifier = 850;
@@ -38,14 +22,13 @@ Game.prototype.initGame = function() {
 	this.minBubbleTravelTime = 100;
 	
 	this.initLevel(1);
-	this.updateStats();
 }
 
 Game.prototype.Start = function() {
 	var _this = this;
 	_this.initGame();
 
-	//this.initLevel(9); // Testing purposes
+	this.initLevel(9); // Testing purposes
 	
 	var add = function() {
         _this.addBubble(_this);
@@ -70,7 +53,7 @@ Game.prototype.initLevel = function(level) {
 		$(".stats").show();
 	}
 	
-	this.updateStats();
+	//this.updateStats();
 }
 
 Game.prototype.addBubble = function(_this) {
@@ -97,9 +80,9 @@ Game.prototype.addBubble = function(_this) {
 			
 			_this.score -= _this.missedBubblePenalty;
 			_this.hitPoints--;
-
+			
 			if (_this.hitPoints == 0) {
-				//_this.gameHasStarted = false;
+				_this.updateStats();
 				_this.initGame();
 				return;
 			}
@@ -118,12 +101,17 @@ Game.prototype.addBubble = function(_this) {
 		
 		if (!_this.gameHasStarted) {
 			_this.gameHasStarted = true;
+			_this.updateStats();
 			$(".stats").fadeIn("slow");
 			return;
 		}
 		
-		var prevScore = _this.score;
+		_this.bubblesKilled++;
+		if (_this.bubblesKilled > 0 && _this.bubblesKilled % 20 == 0) {
+			_this.hitPoints++;
+		}
 		
+		var prevScore = _this.score;
 		_this.score += bubble.value;
 		_this.pointsToNextLevel -= bubble.value;
 		
@@ -198,9 +186,8 @@ Game.prototype.increaseDifficulty = function() {
 }
 
 Game.prototype.updateStats = function() {
-	var minScore = -100;
-	if (this.score < minScore) {
-		this.score = minScore;
+	if (this.score < 0) {
+		this.score = 0;
 	}
 	
 	if (this.score > this.highScore) {
