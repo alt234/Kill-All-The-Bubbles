@@ -26,7 +26,7 @@ function Game() {
 Game.prototype.Start = function() {
 	var _this = this;
 	
-	_this.initLevel(5);
+	_this.initLevel(10);
 
 	var add = function() {
         _this.addBubble(_this);
@@ -35,6 +35,23 @@ Game.prototype.Start = function() {
     }
 
     add();
+}
+
+Game.prototype.initLevel = function(level) {
+	for (var i = 1; i < level; i++) {
+		this.increaseDifficulty();
+	}
+	
+	this.score = this.currentLevelThreshold - this.levelThreshold * this.currentLevel;
+	this.highScore = this.currentLevelThreshold - this.levelThreshold * this.currentLevel;
+	
+	// Technically at level 1, when the page loads you aren't actually playing. Clicking a bubble starts the game. This just makes sure the game isn't running if we start at level 1 and is running if we force it to something else.
+	if (this.currentLevel > 1) {
+		this.gameHasStarted = true;
+		$(".stats").show();
+	}
+	
+	this.updateStats();
 }
 
 Game.prototype.addBubble = function(_this) {
@@ -148,23 +165,6 @@ Game.prototype.increaseDifficulty = function() {
 	this.pointsToNextLevel = this.currentLevelThreshold - previousLevelThreshold;
 }
 
-Game.prototype.initLevel = function(level) {
-	for (var i = 1; i < level; i++) {
-		this.increaseDifficulty();
-	}
-	
-	this.score = this.currentLevelThreshold - this.levelThreshold * this.currentLevel;
-	this.highScore = this.currentLevelThreshold - this.levelThreshold * this.currentLevel;
-	
-	// Technically at level 1, when the page loads you aren't actually playing. Clicking a bubble starts the game. This just makes sure the game isn't running if we start at level 1 and is running if we force it to something else.
-	if (this.currentLevel > 1) {
-		this.gameHasStarted = true;
-		$(".stats").show();
-	}
-	
-	this.updateStats();
-}
-
 Game.prototype.updateStats = function() {
 	if (this.score < this.minScore) {
 		this.score = this.minScore;
@@ -180,13 +180,7 @@ Game.prototype.updateStats = function() {
 	$("#pointsToNextLevel").text("Next: " + this.pointsToNextLevel);
 }
 
-function Bubble() {
-	var minSize = 40;
-	var maxSize = 200;
-
-	var minOpacity = 25;
-	var maxOpacity = 70;
-	
+function Bubble() {	
 	var colors = new Array();
 	colors[0] = "#05F2F2";
 	colors[1] = "#FF007E";
@@ -194,26 +188,27 @@ function Bubble() {
 	colors[3] = "#00FF0E";
 	colors[4] = "#FFFF00";
 	colors[5] = "#FFF";
-	
-	var minX = $(window).width() * .33;
-	var maxX = $(window).width() - maxSize;
-	
-	var opacity = Math.floor(Math.random() * (maxOpacity - minOpacity + 1)) + minOpacity;
 	var color = colors[Math.floor(Math.random() * colors.length)];
 	
-	var distanceFromLeft = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+	var minOpacity = 25;
+	var maxOpacity = 70;
+	var opacity = Math.floor(Math.random() * (maxOpacity - minOpacity + 1)) + minOpacity;
 	
-	this.dimensions = Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
+	var minDimensions = 40;
+	var maxDimensions = 200;
+	var minX = ($(window).width() / 2) - ($(window).width() / 4) + (maxDimensions / 2);
+	var maxX = ($(window).width() / 2) + ($(window).width() / 4) - (maxDimensions/ 2);
+	var startingX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
 	
-	this.value = Math.floor(maxSize / parseInt(this.dimensions)) * 10;
-	
+	this.dimensions = Math.floor(Math.random() * (maxDimensions - minDimensions + 1)) + minDimensions;
+	this.value = Math.floor(maxDimensions / parseInt(this.dimensions)) * 10;
 	this.domElement = $("<div />", {
 		"css": {
 			"height": this.dimensions + "px",
 			"width": this.dimensions + "px",
 			"position": "absolute",
 			"top": $(window).height() + "px",
-			"left": distanceFromLeft + "px",
+			"left": startingX + "px",
 			"background-color": color,
 			"opacity": "." + opacity,
 			"border-radius": "50%",
