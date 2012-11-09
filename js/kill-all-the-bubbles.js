@@ -28,7 +28,7 @@ Game.prototype.Start = function() {
 	var _this = this;
 	_this.initGame();
 
-	this.initLevel(9); // Testing purposes
+	//this.initLevel(9); // Testing purposes
 	
 	var add = function() {
         _this.addBubble(_this);
