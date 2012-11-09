@@ -1,18 +1,15 @@
+//var GamePosition
+
 function Game() {
 	this.gameHasStarted;
-	
 	this.score;
 	this.highScore;
-	
 	this.currentLevel;
 	this.levelThreshold;
 	this.currentLevelThreshold;
-
 	this.hitPoints;
-	
 	this.pointsToNextLevel;
 	this.missedBubblePenalty;
-
 	this.timeModifier;
 	this.minTimeModifier;
 	this.startModifierDegradation;
@@ -20,25 +17,18 @@ function Game() {
 	this.maxTimeBetweenBubbleCreation;
 	this.minTimeBetweenBubbleCreation;
 	this.minBubbleTravelTime;
-	
-	this.Reset();
 }
 
-Game.prototype.Reset = function() {
+Game.prototype.initGame = function() {
 	this.gameHasStarted = false;
-	
 	this.score = 0;
 	this.highScore = 0;
-	
 	this.currentLevel = 1;
 	this.levelThreshold = 100;
 	this.currentLevelThreshold = this.levelThreshold * this.currentLevel;
-
 	this.hitPoints = 10;
-	
 	this.pointsToNextLevel = this.currentLevelThreshold;
 	this.missedBubblePenalty = 10;
-
 	this.timeModifier = 850;
 	this.minTimeModifier = 30;
 	this.startModifierDegradation = 110;
@@ -48,15 +38,15 @@ Game.prototype.Reset = function() {
 	this.minBubbleTravelTime = 100;
 	
 	this.initLevel(1);
-	
 	this.updateStats();
 }
 
 Game.prototype.Start = function() {
 	var _this = this;
-	
-	_this.initLevel(9);
+	_this.initGame();
 
+	//this.initLevel(9); // Testing purposes
+	
 	var add = function() {
         _this.addBubble(_this);
         var rand = Math.round(Math.random() * (_this.maxTimeBetweenBubbleCreation - _this.minTimeBetweenBubbleCreation)) + _this.maxTimeBetweenBubbleCreation;
@@ -109,8 +99,9 @@ Game.prototype.addBubble = function(_this) {
 			_this.hitPoints--;
 
 			if (_this.hitPoints == 0) {
-				_this.gameHasStarted = false;
-				_this.Reset();
+				//_this.gameHasStarted = false;
+				_this.initGame();
+				return;
 			}
 			
 			_this.pointsToNextLevel += _this.missedBubblePenalty;
@@ -123,12 +114,11 @@ Game.prototype.addBubble = function(_this) {
 			_this.updateStats();
 		}
 	}).mousedown(function() {		
-		$(this).stop();
-		$(this).remove();
+		$(this).stop().remove();
 		
 		if (!_this.gameHasStarted) {
 			_this.gameHasStarted = true;
-			$(".stats").show();
+			$(".stats").fadeIn("slow");
 			return;
 		}
 		
