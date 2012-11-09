@@ -181,8 +181,8 @@ Game.prototype.updateStats = function() {
 }
 
 function Bubble() {
-	this.minSize = 40;
-	this.maxSize = 200;
+	var minSize = 40;
+	var maxSize = 200;
 
 	var minOpacity = 25;
 	var maxOpacity = 70;
@@ -195,17 +195,17 @@ function Bubble() {
 	colors[4] = "#FFFF00";
 	colors[5] = "#FFF";
 	
-	this.minX = $(window).width() * .5;
-	this.maxX = $(window).width() - this.maxSize;
+	var minX = $(window).width() * .33;
+	var maxX = $(window).width() - maxSize;
 	
 	var opacity = Math.floor(Math.random() * (maxOpacity - minOpacity + 1)) + minOpacity;
 	var color = colors[Math.floor(Math.random() * colors.length)];
 	
-	var distanceFromLeft = Math.floor(Math.random() * (this.maxX - this.minX + 1)) + this.minX;
+	var distanceFromLeft = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
 	
-	this.dimensions = Math.floor(Math.random() * (this.maxSize - this.minSize + 1)) + this.minSize;
+	this.dimensions = Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
 	
-	this.value = Math.floor(this.maxSize / parseInt(this.dimensions)) * 10;
+	this.value = Math.floor(maxSize / parseInt(this.dimensions)) * 10;
 	
 	this.domElement = $("<div />", {
 		"css": {
