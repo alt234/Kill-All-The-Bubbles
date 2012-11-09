@@ -1,15 +1,6 @@
 function Game() {
 	this.gameHasStarted = false;
 	
-	this.minSize = 40;
-	this.maxSize = 200;
-	
-	this.minOpacity = 25;
-	this.maxOpacity = 70;
-	
-	this.minX = $(window).width() / 2;
-	this.maxX = $(window).width() - this.maxSize;
-	
 	this.currentLevel = 1;
 	this.levelThreshold = 100;
 	this.currentLevelThreshold = this.levelThreshold * this.currentLevel;
@@ -35,7 +26,7 @@ function Game() {
 Game.prototype.Start = function() {
 	var _this = this;
 	
-	_this.initLevel(1);
+	_this.initLevel(5);
 
 	var add = function() {
         _this.addBubble(_this);
@@ -47,53 +38,21 @@ Game.prototype.Start = function() {
 }
 
 Game.prototype.addBubble = function(_this) {
-	var colors = new Array();
-	colors[0] = "#05F2F2";
-	colors[1] = "#FF007E";
-	colors[2] = "#792BA5";
-	colors[3] = "#00FF0E";
-	colors[4] = "#FFFF00";
-	colors[5] = "#FFF";
-
-	var distanceFromTop = $(window).height();
-	var distanceFromLeft = Math.floor(Math.random() * (_this.maxX - _this.minX + 1)) + _this.minX;
+	var bubble = new Bubble();
+	var offScreenDistance = $(window).height() + bubble.dimensions;
 	
-	var bubbleDimensions = Math.floor(Math.random() * (_this.maxSize - _this.minSize + 1)) + _this.minSize;
-	var offScreenDistance = distanceFromTop + bubbleDimensions;
-	
-	var bubbleTravelTime = (bubbleDimensions * _this.timeModifier);
+	var bubbleTravelTime = (bubble.dimensions * _this.timeModifier);
 
 	if (bubbleTravelTime < _this.minBubbleTravelTime) {
 		bubbleTravelTime = _this.minBubbleTravelTime;
 	}
-	
-	var opacity = Math.floor(Math.random() * (_this.maxOpacity - _this.minOpacity + 1)) + _this.minOpacity;
-	var color = colors[Math.floor(Math.random() * colors.length)];
-	
-	var bubble = $("<div />", {
-		"css": {
-			"height": bubbleDimensions + "px",
-			"width": bubbleDimensions + "px",
-			"position": "absolute",
-			"top": distanceFromTop + "px",
-			"left": distanceFromLeft + "px",
-			"background-color": color,
-			"opacity": "." + opacity,
-			"border-radius": "50%",
-			/*"-moz-box-shadow": "3px 3px 3px #111",
-			"-webkit-box-shadow": "3px 3px 3px #111",
-			"box-shadow": "3px 3px 3px #111",*/
-			"cursor": "pointer"
-		}
-	}).appendTo("body").animate({ 
-		top: "-=" + offScreenDistance + "px" 
-	}, {
+		
+	bubble.domElement.appendTo("body").animate({ top: "-=" + offScreenDistance + "px" }, {
 		queue: false, 
 		duration: bubbleTravelTime, 
 		easing: "linear",
 		complete: function() {
 			$(this).remove();
-		
 			if (!_this.gameHasStarted) {
 				return;
 			}
@@ -101,6 +60,7 @@ Game.prototype.addBubble = function(_this) {
 			var previousLevelThreshold = _this.currentLevelThreshold - _this.levelThreshold * _this.currentLevel;
 			
 			_this.score -= _this.missedBubblePenalty;
+			
 			_this.pointsToNextLevel += _this.missedBubblePenalty;
 			if (_this.score < previousLevelThreshold) {
 				_this.score = previousLevelThreshold;
@@ -120,14 +80,10 @@ Game.prototype.addBubble = function(_this) {
 			return;
 		}
 		
-		var size = $(this).css("width").replace(/[^-\d\.]/g, "");
-		
-		var thisBubblesPoints = Math.floor(_this.maxSize / parseInt(size)) * 10;
-		
 		var prevScore = _this.score;
 		
-		_this.score += thisBubblesPoints;
-		_this.pointsToNextLevel -= thisBubblesPoints;
+		_this.score += bubble.value;
+		_this.pointsToNextLevel -= bubble.value;
 		
 		if (_this.score >= _this.currentLevelThreshold && prevScore < _this.currentLevelThreshold) {
 			_this.increaseDifficulty();
@@ -139,8 +95,8 @@ Game.prototype.addBubble = function(_this) {
 	var sideToSide = function() {
 		var sway1 = Math.floor(Math.random() * (_this.maxSway - _this.minSway + 1)) + _this.minSway;
 		var sway2 = Math.floor(Math.random() * (_this.maxSway - _this.minSway + 1)) + _this.minSway;
-		
-		bubble.animate({
+
+		bubble.domElement.animate({
 			left:"-="+sway1
 		}, _this.swayTime, function() {
 			$(this).animate({ left:"+="+sway2 }, _this.swayTime)
@@ -217,9 +173,54 @@ Game.prototype.updateStats = function() {
 	if (this.score > this.highScore) {
 		this.highScore = this.score;
 	}
-
+	
 	$("#scoreValue").text("Score: " + this.score);
 	$("#highScoreValue").text("High Score: " + this.highScore);
 	$("#levelValue").text("Level: " + this.currentLevel);
 	$("#pointsToNextLevel").text("Next: " + this.pointsToNextLevel);
+}
+
+function Bubble() {
+	this.minSize = 40;
+	this.maxSize = 200;
+
+	var minOpacity = 25;
+	var maxOpacity = 70;
+	
+	var colors = new Array();
+	colors[0] = "#05F2F2";
+	colors[1] = "#FF007E";
+	colors[2] = "#792BA5";
+	colors[3] = "#00FF0E";
+	colors[4] = "#FFFF00";
+	colors[5] = "#FFF";
+	
+	this.minX = $(window).width() * .5;
+	this.maxX = $(window).width() - this.maxSize;
+	
+	var opacity = Math.floor(Math.random() * (maxOpacity - minOpacity + 1)) + minOpacity;
+	var color = colors[Math.floor(Math.random() * colors.length)];
+	
+	var distanceFromLeft = Math.floor(Math.random() * (this.maxX - this.minX + 1)) + this.minX;
+	
+	this.dimensions = Math.floor(Math.random() * (this.maxSize - this.minSize + 1)) + this.minSize;
+	
+	this.value = Math.floor(this.maxSize / parseInt(this.dimensions)) * 10;
+	
+	this.domElement = $("<div />", {
+		"css": {
+			"height": this.dimensions + "px",
+			"width": this.dimensions + "px",
+			"position": "absolute",
+			"top": $(window).height() + "px",
+			"left": distanceFromLeft + "px",
+			"background-color": color,
+			"opacity": "." + opacity,
+			"border-radius": "50%",
+			/*"-moz-box-shadow": "3px 3px 3px #111",
+			"-webkit-box-shadow": "3px 3px 3px #111",
+			"box-shadow": "3px 3px 3px #111",*/
+			"cursor": "pointer"
+		}
+	});
 }
