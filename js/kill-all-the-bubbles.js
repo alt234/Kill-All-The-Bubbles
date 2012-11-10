@@ -59,8 +59,6 @@ Game.prototype.initLevel = function(level) {
 		this.gameHasStarted = true;
 		$(".stats").show();
 	}
-	
-	//this.updateStats();
 }
 
 Game.prototype.addBubble = function(_this) {
