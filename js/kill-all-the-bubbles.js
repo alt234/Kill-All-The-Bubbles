@@ -34,8 +34,8 @@ Game.prototype.initGame = function() {
 Game.prototype.Start = function() {
 	var _this = this;
 	_this.initGame();
-
-	//this.initLevel(9); // Testing purposes
+	
+	//_this.initLevel(9); // Testing purposes
 	
 	var add = function() {
         _this.addBubble(_this);
@@ -54,9 +54,14 @@ Game.prototype.initLevel = function(level) {
 	this.score = this.currentLevelThreshold - this.levelThreshold * this.currentLevel;
 	this.highScore = this.currentLevelThreshold - this.levelThreshold * this.currentLevel;
 	
+	var previousLevelThreshold = this.currentLevelThreshold - (this.levelThreshold * this.currentLevel);
+	this.pointsToNextLevel = this.currentLevelThreshold - previousLevelThreshold;
+	
 	// Technically at level 1, when the page loads you aren't actually playing. Clicking a bubble starts the game. This just makes sure the game isn't running if we start at level 1 and is running if we force it to something else.
 	if (this.currentLevel > 1) {
 		this.gameHasStarted = true;
+		this.updateStats();
+		//$(".play").hide();
 		$(".stats").show();
 	}
 }
@@ -105,9 +110,6 @@ Game.prototype.addBubble = function(_this) {
 		$(this).stop().remove();
 		
 		if (!_this.gameHasStarted) {
-			_this.gameHasStarted = true;
-			_this.updateStats();
-			$(".stats").fadeIn("slow");
 			return;
 		}
 		

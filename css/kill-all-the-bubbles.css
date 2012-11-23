@@ -2,17 +2,30 @@ html, body {
 	background-color: #222; /* #FFF looks pretty cool too, like an xray or something */
 	color: #DDD;
 	overflow: hidden;
+	font-family: 'Quicksand', Arial;
 }
 
 .stats {
-	display: none;
-	font-family: 'Cedarville Cursive', cursive; 
 	font-size: 2em;
-	color: #DDD;
+	display: none;
 	float: right;
 	width: 300px;
 	text-align: right;
 	margin: 15px 10px 0 0;
+}
+
+.play {
+	float: right;
+	clear: both;
+	width: 45px;
+	height: 20px;
+	text-align: right;
+	margin: 15px 15px 0 0;
+}
+
+.play:hover {
+	color: #FF007E;
+	cursor: pointer;
 }
 
 #levelValue, #highScoreValue, #pointsToNextLevel {
