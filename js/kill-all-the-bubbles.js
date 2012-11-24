@@ -1,5 +1,6 @@
 function Game(gamePosition) {
 	this.gamePosition = (typeof gamePosition === "undefined") ? "center" : gamePosition;
+	this.bubbles = new Array();
 }
 
 Game.prototype.initGame = function() {
@@ -75,12 +76,21 @@ Game.prototype.addBubble = function(_this) {
 		bubbleTravelTime = _this.minBubbleTravelTime;
 	}
 		
-	bubble.domElement.appendTo("body").animate({ top: "-=" + ($(window).height() + bubble.dimensions) + "px" }, {
+	var bubbleDiv = bubble.domElement.appendTo("body").animate({ top: "-=" + ($(window).height() + bubble.dimensions) + "px" }, {
 		queue: false, 
 		duration: bubbleTravelTime, 
 		easing: "linear",
 		complete: function() {
 			$(this).remove();
+			
+			for (var i = 0; i < _this.bubbles.length; i++) {
+				if(_this.bubbles[i].not(':animated')) {
+					_this.bubbles.splice(i, 1);
+					break;
+				}
+			}
+			
+			$("#total").html(_this.bubbles.length);
 			
 			if (!_this.gameHasStarted) {
 				return;
@@ -108,6 +118,15 @@ Game.prototype.addBubble = function(_this) {
 		}
 	}).mousedown(function() {		
 		$(this).stop().remove();
+		
+		for (var i = 0; i < _this.bubbles.length; i++) {
+			if(_this.bubbles[i].not(':animated')) {
+				_this.bubbles.splice(i, 1);
+				break;
+			}
+		}
+		
+		$("#total").html(_this.bubbles.length);
 		
 		if (!_this.gameHasStarted) {
 			return;
@@ -145,6 +164,9 @@ Game.prototype.addBubble = function(_this) {
 	
 	sideToSide();
 	setInterval(sideToSide, swayTime * 2);
+	
+	_this.bubbles.push(bubbleDiv);
+	$("#total").html(_this.bubbles.length);
 }
 
 // Need to see if I come can up with some sort of progression that doesn't require all the special cases. So far though these special cases make this is the most fun variant.
@@ -262,3 +284,9 @@ function Bubble(gamePosition) {
 		}
 	});
 }
+
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
