@@ -1,6 +1,7 @@
 function Game(gamePosition) {
 	this.gamePosition = (typeof gamePosition === "undefined") ? "center" : gamePosition;
 	this.bubbles = new Array();
+	$("#total").html(this.bubbles.length);
 }
 
 Game.prototype.initGame = function() {
@@ -84,7 +85,7 @@ Game.prototype.addBubble = function(_this) {
 			$(this).remove();
 			
 			for (var i = 0; i < _this.bubbles.length; i++) {
-				if(_this.bubbles[i].not(':animated')) {
+				if(!_this.bubbles[i].is(':animated')) {
 					_this.bubbles.splice(i, 1);
 					break;
 				}
@@ -120,11 +121,16 @@ Game.prototype.addBubble = function(_this) {
 		$(this).stop().remove();
 		
 		for (var i = 0; i < _this.bubbles.length; i++) {
-			if(_this.bubbles[i].not(':animated')) {
+			if(!_this.bubbles[i].is(':animated')) {
 				_this.bubbles.splice(i, 1);
 				break;
 			}
 		}
+		
+		// Update indices
+		/*for (var i = 0; i < _this.bubbles.length; i++) {			
+			_this.bubbles[i].html(i);
+		}*/
 		
 		$("#total").html(_this.bubbles.length);
 		
@@ -166,6 +172,8 @@ Game.prototype.addBubble = function(_this) {
 	setInterval(sideToSide, swayTime * 2);
 	
 	_this.bubbles.push(bubbleDiv);
+	//bubbleDiv.html((_this.bubbles.length - 1));
+	
 	$("#total").html(_this.bubbles.length);
 }
 
@@ -284,9 +292,3 @@ function Bubble(gamePosition) {
 		}
 	});
 }
-
-Array.prototype.remove = function(from, to) {
-  var rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
