@@ -46,3 +46,7 @@ html, body {
 #levelValue, #highScoreValue, #pointsToNextLevel {
 	margin-top: 20px;
 }
+
+.debug {
+	display: none;
+}

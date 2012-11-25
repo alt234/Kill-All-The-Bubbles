@@ -182,7 +182,7 @@ Game.prototype.addBubble = function(_this) {
 	setInterval(sideToSide, swayTime * 2);
 	
 	_this.bubbles.push(bubbleDiv);
-	//bubbleDiv.html(_this.bubbles.length - 1);
+	bubbleDiv.html("<p class='debug'>" + (_this.bubbles.length - 1) + "</p>");
 	
 	$("#total").html(_this.bubbles.length);
 }
@@ -257,9 +257,9 @@ Game.prototype.garbageCollectBubbleArray = function() {
 	}
 	
 	// Update indices
-	/*for (var i = 0; i < _this.bubbles.length; i++) {			
-		_this.bubbles[i].html(i);
-	}*/
+	for (var i = 0; i < this.bubbles.length; i++) {			
+		this.bubbles[i].html("<p class='debug'>" + i + "</p>");
+	}
 	
 	$("#total").html(this.bubbles.length);
 }
