@@ -60,17 +60,15 @@ Game.prototype.Play = function() {
 
 Game.prototype.Replay = function() {
 	var _this = this;
-	var curr = 0;
 
 	var removeBubble = function() {
-		if (curr === _this.bubbles.length) {
-			_this.bubbles = new Array();
+		if (_this.bubbles.length === 0) {
 			_this.Play();
 			return;
 		};
 		
-		_this.bubbles[curr].stop().remove();
-		curr++;
+		_this.bubbles[0].stop().remove();
+		_this.garbageCollectBubbleArray();
 
 		setTimeout(removeBubble, 100);
 	}
@@ -93,7 +91,10 @@ Game.prototype.initLevel = function(level) {
 	if (this.currentLevel > 1) {
 		this.gameHasStarted = true;
 		this.updateStats();
+		
+		$(".play").hide();
 		$(".stats").show();
+		$(".replay").show();
 	}
 }
 
@@ -111,8 +112,7 @@ Game.prototype.addBubble = function(_this) {
 		duration: bubbleTravelTime, 
 		easing: "linear",
 		complete: function() {
-			$(this).remove();
-			
+			$(this).stop().remove(); // Apparently when the animation is completed it's not necessarilly stopped?
 			_this.garbageCollectBubbleArray();
 			
 			if (!_this.gameHasStarted) {
@@ -260,7 +260,7 @@ Game.prototype.garbageCollectBubbleArray = function() {
 	for (var i = 0; i < this.bubbles.length; i++) {			
 		this.bubbles[i].html("<p class='debug'>" + i + "</p>");
 	}
-	
+
 	$("#total").html(this.bubbles.length);
 }
 
