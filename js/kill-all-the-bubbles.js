@@ -48,6 +48,34 @@ Game.prototype.Start = function() {
     add();
 }
 
+Game.prototype.Play = function() {
+	var _this = this;
+	var curr = 0;
+
+	var remove = function() {
+		if (curr === _this.bubbles.length) {
+			_this.initGame();
+			_this.bubbles = new Array();
+			_this.gameHasStarted = true;
+			_this.updateStats();
+			
+			//$(".play").hide();
+			$(".stats").fadeIn("slow");
+			
+			curr = 0;
+			
+			return;
+		};
+		
+		_this.bubbles[curr].stop().remove();
+		curr++;
+
+		setTimeout(remove, 100);
+	}
+	
+	remove();
+}
+
 Game.prototype.initLevel = function(level) {
 	for (var i = 1; i < level; i++) {
 		this.increaseDifficulty();
@@ -84,14 +112,7 @@ Game.prototype.addBubble = function(_this) {
 		complete: function() {
 			$(this).remove();
 			
-			for (var i = 0; i < _this.bubbles.length; i++) {
-				if(!_this.bubbles[i].is(':animated')) {
-					_this.bubbles.splice(i, 1);
-					break;
-				}
-			}
-			
-			$("#total").html(_this.bubbles.length);
+			_this.garbageCollectBubbleArray();
 			
 			if (!_this.gameHasStarted) {
 				return;
@@ -120,19 +141,7 @@ Game.prototype.addBubble = function(_this) {
 	}).mousedown(function() {		
 		$(this).stop().remove();
 		
-		for (var i = 0; i < _this.bubbles.length; i++) {
-			if(!_this.bubbles[i].is(':animated')) {
-				_this.bubbles.splice(i, 1);
-				break;
-			}
-		}
-		
-		// Update indices
-		/*for (var i = 0; i < _this.bubbles.length; i++) {			
-			_this.bubbles[i].html(i);
-		}*/
-		
-		$("#total").html(_this.bubbles.length);
+		_this.garbageCollectBubbleArray();
 		
 		if (!_this.gameHasStarted) {
 			return;
@@ -172,7 +181,7 @@ Game.prototype.addBubble = function(_this) {
 	setInterval(sideToSide, swayTime * 2);
 	
 	_this.bubbles.push(bubbleDiv);
-	//bubbleDiv.html((_this.bubbles.length - 1));
+	//bubbleDiv.html(_this.bubbles.length - 1);
 	
 	$("#total").html(_this.bubbles.length);
 }
@@ -236,6 +245,22 @@ Game.prototype.updateStats = function() {
 	$("#levelValue").text("Level: " + this.currentLevel);
 	$("#pointsToNextLevel").text("Next: " + this.pointsToNextLevel);
 	$("#hitPoints").text("Hit Points: " + this.hitPoints);
+}
+
+Game.prototype.garbageCollectBubbleArray = function() {
+	for (var i = 0; i < this.bubbles.length; i++) {
+		if(!this.bubbles[i].is(':animated')) {
+			this.bubbles.splice(i, 1);
+			break;
+		}
+	}
+	
+	// Update indices
+	/*for (var i = 0; i < _this.bubbles.length; i++) {			
+		_this.bubbles[i].html(i);
+	}*/
+	
+	$("#total").html(_this.bubbles.length);
 }
 
 function Bubble(gamePosition) {	
