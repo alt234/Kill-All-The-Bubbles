@@ -49,31 +49,33 @@ Game.prototype.Start = function() {
 }
 
 Game.prototype.Play = function() {
+	this.initGame();
+	this.gameHasStarted = true;
+	this.updateStats();
+	
+	$("#total").html(this.bubbles.length);
+	
+	$(".stats").fadeIn("slow");
+}
+
+Game.prototype.Replay = function() {
 	var _this = this;
 	var curr = 0;
 
-	var remove = function() {
+	var removeBubble = function() {
 		if (curr === _this.bubbles.length) {
-			_this.initGame();
 			_this.bubbles = new Array();
-			_this.gameHasStarted = true;
-			_this.updateStats();
-			
-			//$(".play").hide();
-			$(".stats").fadeIn("slow");
-			
-			curr = 0;
-			
+			_this.Play();
 			return;
 		};
 		
 		_this.bubbles[curr].stop().remove();
 		curr++;
 
-		setTimeout(remove, 100);
+		setTimeout(removeBubble, 100);
 	}
 	
-	remove();
+	removeBubble();
 }
 
 Game.prototype.initLevel = function(level) {
@@ -91,7 +93,6 @@ Game.prototype.initLevel = function(level) {
 	if (this.currentLevel > 1) {
 		this.gameHasStarted = true;
 		this.updateStats();
-		//$(".play").hide();
 		$(".stats").show();
 	}
 }
@@ -260,7 +261,7 @@ Game.prototype.garbageCollectBubbleArray = function() {
 		_this.bubbles[i].html(i);
 	}*/
 	
-	$("#total").html(_this.bubbles.length);
+	$("#total").html(this.bubbles.length);
 }
 
 function Bubble(gamePosition) {	

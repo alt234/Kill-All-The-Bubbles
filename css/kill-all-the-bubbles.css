@@ -28,6 +28,21 @@ html, body {
 	cursor: pointer;
 }
 
+.replay {
+	display: none;
+	float: right;
+	clear: both;
+	width: 45px;
+	height: 20px;
+	text-align: right;
+	margin: 15px 15px 0 0;
+}
+
+.replay:hover {
+	color: #FF007E;
+	cursor: pointer;
+}
+
 #levelValue, #highScoreValue, #pointsToNextLevel {
 	margin-top: 20px;
 }
