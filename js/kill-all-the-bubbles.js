@@ -52,6 +52,7 @@ Game.prototype.Play = function() {
 	this.initGame();
 	this.gameHasStarted = true;
 	this.updateStats();
+	$("#health").animate({width: '125'}, 800);
 	
 	$("#total").html(this.bubbles.length);
 	
@@ -91,6 +92,7 @@ Game.prototype.initLevel = function(level) {
 	if (this.currentLevel > 1) {
 		this.gameHasStarted = true;
 		this.updateStats();
+		$("#health").animate({width: '125'}, 1000);
 		
 		$(".play").hide();
 		$(".stats").show();
@@ -123,6 +125,8 @@ Game.prototype.addBubble = function(_this) {
 			
 			_this.score -= _this.missedBubblePenalty;
 			_this.hitPoints--;
+			$("#health").animate({width: '-=25'}, 100);
+			
 			
 			if (_this.hitPoints === 0) {
 				_this.updateStats();
@@ -151,6 +155,15 @@ Game.prototype.addBubble = function(_this) {
 		_this.totalBubblesPopped++;
 		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 20 === 0) {
 			_this.hitPoints++;
+			var $health = $("#health");
+			var healthWidth = $health.width();
+			if (healthWidth < 250) {
+				$health.animate({width: '+=25'}, 100);
+			}
+			else if (healthWidth === 250)
+			{
+				//$("healthBorder").css("box-shadow:", "0 0 25px #FFF700")
+			}
 		}
 		
 		var prevScore = _this.score;
