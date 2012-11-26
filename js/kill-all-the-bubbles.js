@@ -52,10 +52,10 @@ Game.prototype.Play = function() {
 	this.initGame();
 	this.gameHasStarted = true;
 	this.updateStats();
+	
+	$("#health").removeClass("lowHealth");
 	$("#health").animate({width: '125'}, 800);
-	
 	$("#total").html(this.bubbles.length);
-	
 	$(".stats").fadeIn("slow");
 }
 
@@ -92,7 +92,7 @@ Game.prototype.initLevel = function(level) {
 	if (this.currentLevel > 1) {
 		this.gameHasStarted = true;
 		this.updateStats();
-		$("#health").removeClass("lowHealth");
+		
 		$("#health").animate({width: '175'}, 1000);
 		
 		$(".play").hide();
@@ -170,7 +170,7 @@ Game.prototype.addBubble = function(_this) {
 		}
 		
 		_this.totalBubblesPopped++;
-		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 10 === 0) {
+		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 12 === 0) {
 			_this.hitPoints++;
 			var $health = $("#health");
 			if ($health.width() < 250) {
