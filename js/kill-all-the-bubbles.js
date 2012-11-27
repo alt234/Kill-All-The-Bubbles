@@ -70,7 +70,7 @@ Game.prototype.Play = function() {
 	this.updateStats();
 	
 	$("#health").removeClass("lowHealth");
-	$("#health").animate({width: '175'}, 800);
+	$("#health").animate({width: '180'}, 800);
 	$("#total").html(this.bubbles.length);
 	$(".stats").fadeIn("slow");
 }
@@ -87,7 +87,7 @@ Game.prototype.Replay = function() {
 		_this.bubbles[0].stop().remove();
 		_this.garbageCollectBubbleArray();
 
-		setTimeout(removeBubble, 100);
+		setTimeout(removeBubble, 70);
 	}
 	
 	removeBubble();
@@ -109,7 +109,7 @@ Game.prototype.initLevel = function(level) {
 		this.gameHasStarted = true;
 		this.updateStats();
 		
-		$("#health").animate({width: '175'}, 1000);
+		$("#health").animate({width: '180'}, 1000);
 		
 		$(".play").hide();
 		$(".stats").show();
@@ -147,20 +147,20 @@ Game.prototype.addBubble = function(_this) {
 			if ($health.width() === 250) {
 				$("#healthBorder").removeClass("glow");
 			}
-			else if ($health.width() === 200) {
+			else if ($health.width() === 180) {
 				$("#health").removeClass("highHealth", 300);
 			}
-			else if ($health.width() === 25) {
-				$health.animate({width: '-=25'}, 100);
+			else if ($health.width() === 10) {
+				$health.animate({width: '-=10'}, 100);
 				_this.updateStats();
 				$("#gameOver").fadeIn("fast");
 				_this.initGame();
 				return;
 			}
 			
-			$health.animate({width: '-=25'}, 100);
+			$health.animate({width: '-=10'}, 100);
 			
-			if ($health.width() <= 100) {
+			if ($health.width() <= 80) {
 				$health.addClass("lowHealth", 300);
 			}
 			else {
@@ -190,12 +190,12 @@ Game.prototype.addBubble = function(_this) {
 			_this.hitPoints++;
 			var $health = $("#health");
 			if ($health.width() < 250) {
-				$health.animate({width: '+=25'}, 100);
+				$health.animate({width: '+=10'}, 100);
 				
-				if ($health.width() === 225) { // We're about to hit max health, so make it glow.
+				if ($health.width() === 240) { // We're about to hit max health, so make it glow.
 					$("#healthBorder").addClass("glow");
 				}
-				else if ($health.width() === 175) {
+				else if ($health.width() === 170) {
 					$("#health").addClass("highHealth", 300);
 				}
 			}

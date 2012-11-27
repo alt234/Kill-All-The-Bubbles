@@ -9,6 +9,6 @@ $(function () {
 	
 	$("#restartText").click(function () {
 		game.Replay();
-		$("#gameOver").fadeOut("slow");
+		$("#gameOver").fadeOut(2000);
 	});
 });
