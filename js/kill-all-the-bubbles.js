@@ -2,6 +2,22 @@ function Game(gamePosition) {
 	this.gamePosition = (typeof gamePosition === "undefined") ? "center" : gamePosition;
 	this.bubbles = new Array();
 	$("#total").html(this.bubbles.length);
+	
+	var left = $(window).width() / 4;
+	var top = $(window).height() / 4;;
+	
+	/*if (this.gamePosition === "left") {
+		left = $(window).width() / 6;
+	}
+	else if (this.gamePosition === "center") {
+		left = $(window).width() / 4;
+	}
+	else if (this.gamePosition === "right") {
+		left = $(window).width() / 2;
+	}*/
+	
+	$("#gameOver").css("left", left);
+	$("#gameOver").css("top", top);
 }
 
 Game.prototype.initGame = function() {
@@ -54,7 +70,7 @@ Game.prototype.Play = function() {
 	this.updateStats();
 	
 	$("#health").removeClass("lowHealth");
-	$("#health").animate({width: '125'}, 800);
+	$("#health").animate({width: '175'}, 800);
 	$("#total").html(this.bubbles.length);
 	$(".stats").fadeIn("slow");
 }
@@ -97,7 +113,6 @@ Game.prototype.initLevel = function(level) {
 		
 		$(".play").hide();
 		$(".stats").show();
-		$(".replay").show();
 	}
 }
 
@@ -138,6 +153,7 @@ Game.prototype.addBubble = function(_this) {
 			else if ($health.width() === 25) {
 				$health.animate({width: '-=25'}, 100);
 				_this.updateStats();
+				$("#gameOver").fadeIn("fast");
 				_this.initGame();
 				return;
 			}
@@ -170,7 +186,7 @@ Game.prototype.addBubble = function(_this) {
 		}
 		
 		_this.totalBubblesPopped++;
-		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 12 === 0) {
+		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 10 === 0) {
 			_this.hitPoints++;
 			var $health = $("#health");
 			if ($health.width() < 250) {

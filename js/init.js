@@ -5,10 +5,10 @@ $(function () {
 	$(".play").click(function () {
 		game.Play();
 		$(".play").hide();
-		$(".replay").show();
 	});
 	
-	$(".replay").click(function () {
+	$("#restartText").click(function () {
 		game.Replay();
+		$("#gameOver").fadeOut("slow");
 	});
 });
