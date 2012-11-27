@@ -151,7 +151,7 @@ Game.prototype.addBubble = function(_this) {
 			var $health = $("#health");
 			
 			if ($health.width() === _this.maxHealth) {
-				$("#healthBorder").removeClass("glow");
+				$("#highHealthBorder").removeClass("glow");
 			}
 			else if ($health.width() === _this.highHealth) {
 				$("#health").removeClass("highHealth", 300);
@@ -200,7 +200,7 @@ Game.prototype.addBubble = function(_this) {
 				$health.animate({width: '+=' + _this.damage}, 100);
 
 				if ($health.width() === _this.maxHealth - 10) { // We're about to hit max health, so make it glow.
-					$("#healthBorder").addClass("glow");
+					$("#highHealthBorder").addClass("glow");
 				}
 				else if ($health.width() === _this.highHealth - 10) { // Once animation is complete we'll hit the high health threshold. Turn it blue.
 					$("#health").addClass("highHealth", 300);
