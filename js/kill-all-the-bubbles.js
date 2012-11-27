@@ -46,6 +46,12 @@ Game.prototype.initGame = function() {
 	this.totalYellowBubblesPopped = 0;
 	this.totalWhiteBubblesPopped = 0;
 	
+	this.maxHealth = 250;
+	this.startingHealth = 170;
+	this.highHealth = 180;
+	this.lowHealth = 70;
+	this.damage = 10;
+	
 	this.initLevel(1);
 }
 
@@ -53,7 +59,7 @@ Game.prototype.Start = function() {
 	var _this = this;
 	_this.initGame();
 	
-	//_this.initLevel(9); // Testing purposes
+	_this.initLevel(6); // Testing purposes
 	
 	var add = function() {
         _this.addBubble(_this);
@@ -70,7 +76,7 @@ Game.prototype.Play = function() {
 	this.updateStats();
 	
 	$("#health").removeClass("lowHealth");
-	$("#health").animate({width: '180'}, 800);
+	$("#health").animate({width: this.startingHealth}, 800);
 	$("#total").html(this.bubbles.length);
 	$(".stats").fadeIn("slow");
 }
@@ -109,7 +115,7 @@ Game.prototype.initLevel = function(level) {
 		this.gameHasStarted = true;
 		this.updateStats();
 		
-		$("#health").animate({width: '180'}, 1000);
+		$("#health").animate({width: this.startingHealth}, 1000);
 		
 		$(".play").hide();
 		$(".stats").show();
@@ -144,23 +150,23 @@ Game.prototype.addBubble = function(_this) {
 
 			var $health = $("#health");
 			
-			if ($health.width() === 250) {
+			if ($health.width() === _this.maxHealth) {
 				$("#healthBorder").removeClass("glow");
 			}
-			else if ($health.width() === 180) {
+			else if ($health.width() === _this.highHealth) {
 				$("#health").removeClass("highHealth", 300);
 			}
 			else if ($health.width() === 10) {
-				$health.animate({width: '-=10'}, 100);
+				$health.animate({width: '-=' + _this.damage}, 100);
 				_this.updateStats();
 				$("#gameOver").fadeIn("fast");
 				_this.initGame();
 				return;
 			}
 			
-			$health.animate({width: '-=10'}, 100);
+			$health.animate({width: '-=' + _this.damage}, 100);
 			
-			if ($health.width() <= 80) {
+			if ($health.width() <= _this.lowHealth + 10) { // We're about to hit the low health threshold once the animation is complete.
 				$health.addClass("lowHealth", 300);
 			}
 			else {
@@ -189,13 +195,14 @@ Game.prototype.addBubble = function(_this) {
 		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 10 === 0) {
 			_this.hitPoints++;
 			var $health = $("#health");
-			if ($health.width() < 250) {
-				$health.animate({width: '+=10'}, 100);
-				
-				if ($health.width() === 240) { // We're about to hit max health, so make it glow.
+
+			if ($health.width() < _this.maxHealth) {
+				$health.animate({width: '+=' + _this.damage}, 100);
+
+				if ($health.width() === _this.maxHealth - 10) { // We're about to hit max health, so make it glow.
 					$("#healthBorder").addClass("glow");
 				}
-				else if ($health.width() === 170) {
+				else if ($health.width() === _this.highHealth - 10) { // Once animation is complete we'll hit the high health threshold. Turn it blue.
 					$("#health").addClass("highHealth", 300);
 				}
 			}
