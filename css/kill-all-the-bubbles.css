@@ -84,14 +84,13 @@ html, body {
 	font-size: 5em;
 }
 
-#restartText {
+#restartText, #quitText {
 	font-size: 1.5em;
-	margin-top: 50px;
 	text-decoration: none;
-	color: #ccc;
+    color: #fff;
 }
 
-#restartText:hover {
+#restartText:hover, #quitText:hover {
 	color: #FF007E;
 }
 

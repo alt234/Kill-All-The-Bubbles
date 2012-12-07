@@ -50,7 +50,7 @@ Game.prototype.Start = function() {
 	var _this = this;
 	_this.initGame();
 	
-	//_this.initLevel(8); // Testing purposes
+	//_this.initLevel(9); // Testing purposes
 	
 	var add = function() {
         _this.addBubble(_this);
@@ -90,6 +90,13 @@ Game.prototype.Replay = function() {
 	removeBubble();
 }
 
+Game.prototype.Quit = function() {
+	var _this = this;
+
+    $(".stats").fadeOut("slow", function() {
+        $(".play").show();
+    });
+}
 Game.prototype.initLevel = function(level) {
 	for (var i = 1; i < level; i++) {
 		this.increaseDifficulty();

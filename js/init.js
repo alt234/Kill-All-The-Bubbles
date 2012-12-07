@@ -11,4 +11,9 @@ $(function () {
 		game.Replay();
 		$("#gameOver").fadeOut(2000);
 	});
+
+    $("#quitText").click(function () {
+	    game.Quit();
+        $("#gameOver").fadeOut("slow");
+    });
 });
