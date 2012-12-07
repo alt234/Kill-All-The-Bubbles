@@ -65,6 +65,14 @@ html, body {
 	border: 1px solid #222;
 }
 
+#healthText {
+    position: relative;
+    top: 0px;
+    right: 0px;
+    font-size: .6em;
+    float: right;
+}
+
 #gameOver {
 	display: none;
 	position: fixed;

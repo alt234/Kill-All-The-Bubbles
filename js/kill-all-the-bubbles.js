@@ -293,7 +293,7 @@ Game.prototype.updateStats = function() {
 	$("#highScoreValue").text("High Score: " + this.highScore);
 	$("#levelValue").text("Level: " + this.currentLevel);
 	$("#pointsToNextLevel").text("Next: " + this.pointsToNextLevel);
-	//$("#hitPoints").text("Health: " + this.health);
+	$("#healthText").text(this.health);
 }
 
 Game.prototype.garbageCollectBubbleArray = function() {
