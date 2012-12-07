@@ -158,7 +158,7 @@ Game.prototype.addBubble = function(_this) {
             else if (_this.health <= _this.lowHealth && _this.health > 0) {
 				$health.addClass("lowHealth", 300);
             }
-			else {
+			else if (_this.health <= 0) {
                 _this.health = 0;
 				_this.updateStats();
 				$("#gameOver").fadeIn("fast");
