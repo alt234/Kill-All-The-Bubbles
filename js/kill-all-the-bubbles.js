@@ -1,23 +1,13 @@
 function Game(gamePosition) {
+	/*$.getJSON( "http://smart-ip.net/geoip-json?callback=?",
+		function(data) {
+	    	alert(data.host + " " + data.city);
+	    }
+	);*/
+	
 	this.gamePosition = (typeof gamePosition === "undefined") ? "center" : gamePosition;
 	this.bubbles = new Array();
 	$("#total").html(this.bubbles.length);
-	
-	var left = $(window).width() / 4;
-	var top = $(window).height() / 4;;
-	
-	/*if (this.gamePosition === "left") {
-		left = $(window).width() / 6;
-	}
-	else if (this.gamePosition === "center") {
-		left = $(window).width() / 4;
-	}
-	else if (this.gamePosition === "right") {
-		left = $(window).width() / 2;
-	}*/
-	
-	$("#gameOver").css("left", left);
-	$("#gameOver").css("top", top);
 }
 
 Game.prototype.initGame = function() {
@@ -26,7 +16,8 @@ Game.prototype.initGame = function() {
 	this.highHealth = 180;
 	this.lowHealth = 70;
 	this.damage = 10;
-	
+    this.health = this.startingHealth;
+
 	this.gameHasStarted = false;
 	this.score = 0;
 	this.highScore = 0;
@@ -148,29 +139,26 @@ Game.prototype.addBubble = function(_this) {
 
 			var $health = $("#health");
 			
-			if ($health.width() === _this.maxHealth) {
+			$health.animate({width: '-=' + _this.damage}, 100);
+			_this.health -= _this.damage;
+            
+            if (_this.health < _this.maxHealth && _this.health > _this.highHealth) {
 				$("#healthBorder").removeClass("glow");
 			}
-			else if ($health.width() === _this.highHealth) {
+			else if (_this.health < _this.highHealth && _this.health > _this.lowHealth) {
 				$("#health").removeClass("highHealth", 300);
 			}
-			else if ($health.width() <= 10) {
-				$health.animate({width: '-=' + _this.damage}, 100);
+            else if (_this.health <= _this.lowHealth && _this.health > 0) {
+				$health.addClass("lowHealth", 300);
+            }
+			else {
+                _this.health = 0;
 				_this.updateStats();
 				$("#gameOver").fadeIn("fast");
 				_this.initGame();
 				return;
 			}
-			
-			$health.animate({width: '-=' + _this.damage}, 100);
-			
-			if ($health.width() <= _this.lowHealth + 10) { // We're about to hit the low health threshold once the animation is complete.
-				$health.addClass("lowHealth", 300);
-			}
-			else {
-				$health.removeClass("lowHealth");
-			}
-			
+		
 			_this.pointsToNextLevel += _this.missedBubblePenalty;
 			if (_this.score < previousLevelThreshold) {
 				_this.score = previousLevelThreshold;
@@ -193,13 +181,14 @@ Game.prototype.addBubble = function(_this) {
 		if (_this.totalBubblesPopped > 0 && _this.totalBubblesPopped % 10 === 0) {
 			var $health = $("#health");
 
-			if ($health.width() < _this.maxHealth) {
+			if (_this.health < _this.maxHealth) {
 				$health.animate({width: '+=' + _this.damage}, 100);
+                _this.health += _this.damage;
 
-				if ($health.width() === _this.maxHealth - 10) { // We're about to hit max health, so make it glow.
+				if (_this.health === _this.maxHealth) { // We're about to hit max health, so make it glow.
 					$("#healthBorder").addClass("glow");
 				}
-				else if ($health.width() === _this.highHealth - 10) { // Once animation is complete we'll hit the high health threshold. Turn it blue.
+				else if (_this.health === _this.highHealth) { // Once animation is complete we'll hit the high health threshold. Turn it blue.
 					$health.addClass("highHealth", 300);
 				}
 			}
@@ -285,7 +274,7 @@ Game.prototype.increaseDifficulty = function() {
 }
 
 Game.prototype.updateStats = function() {
-	if (this.score < 0) {
+    if (this.score < 0) {
 		this.score = 0;
 	}
 	
@@ -297,7 +286,7 @@ Game.prototype.updateStats = function() {
 	$("#highScoreValue").text("High Score: " + this.highScore);
 	$("#levelValue").text("Level: " + this.currentLevel);
 	$("#pointsToNextLevel").text("Next: " + this.pointsToNextLevel);
-	//$("#hitPoints").text("Health: " + $("#health").width());
+	//$("#hitPoints").text("Health: " + this.health);
 }
 
 Game.prototype.garbageCollectBubbleArray = function() {

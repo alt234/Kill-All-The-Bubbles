@@ -1,6 +1,6 @@
 html, body {
 	background-color: #222; /* #FFF looks pretty cool too, like an xray or something */
-	color: #DDD;
+	color: #FFF;
 	overflow: hidden;
 	font-family: 'Quicksand', Arial;
 }
@@ -16,7 +16,6 @@ html, body {
 
 .play {
 	float: right;
-	clear: both;
 	width: 45px;
 	height: 20px;
 	text-align: right;
@@ -68,9 +67,14 @@ html, body {
 
 #gameOver {
 	display: none;
-	position: absolute;
-	top: 450px;
-	font-family: 'Press Start 2P';
+	position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -400px;
+    margin-top: -100px;
+    height: 200px;
+	width: 800px;
+    font-family: 'Press Start 2P';
 	text-align: center;
 	text-shadow: 3px 3px 3px #111;
 	z-index: 1000000000000000;
